@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+service XMLService {
+
+  rpc CsvToXml (CsvRequest) returns (XmlResponse);
+
+  rpc ValidateXml (XmlRequest) returns (ValidationResponse);
+
+  rpc XPathQuery (QueryRequest) returns (QueryResponse);
+}
+
+
+message CsvRequest {
+  string csv = 1;
+}
+
+message XmlRequest {
+  string xml = 1;
+}
+
+message ValidationResponse {
+  bool valid = 1;
+  string message = 2;
+}
+
+message QueryRequest {
+  string xml = 1;
+  string query = 2;
+}
+
+message QueryResponse {
+  string result = 1;
+}
+
+message XmlResponse {
+  string xml = 1;
+}

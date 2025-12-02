@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  server:
+    build: ./Server-gRPC
+    ports:
+      - "50051:50051"
+    volumes:
+      - ./src:/data
+
+  client:
+    build: ./Client-gRPC
+    depends_on:
+      - server
+    volumes:
+      - ./src:/data
