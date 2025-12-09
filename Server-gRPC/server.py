@@ -4,7 +4,7 @@ import service_pb2, service_pb2_grpc
 from lxml import etree
 from scripts.csv_to_xml import csv_to_xml
 
-XSD_FILE = "schema.xsd"
+XSD_FILE = "src/schema.xsd"
 
 
 class XMLService(service_pb2_grpc.XMLServiceServicer):
@@ -30,6 +30,7 @@ class XMLService(service_pb2_grpc.XMLServiceServicer):
         result = xml.xpath(request.query)
 
         return service_pb2.QueryResponse(result=str(result))
+
 
 
 def serve():
