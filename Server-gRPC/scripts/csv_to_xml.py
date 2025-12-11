@@ -23,6 +23,7 @@ def safe_xml_tag(name: str, idx: int) -> str:
 
 
 def csv_to_xml(csv_chunk: str) -> str:
+
     f = io.StringIO(csv_chunk)
     reader = csv.reader(f)
 
@@ -34,9 +35,11 @@ def csv_to_xml(csv_chunk: str) -> str:
     root = etree.Element("root")
 
     for row in reader:
+
         jogador = etree.SubElement(root, "jogador")
 
         for campo, valor in zip(headers, row):
             etree.SubElement(jogador, campo).text = valor.strip()
+    
 
     return etree.tostring(root, encoding="unicode")

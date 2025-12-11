@@ -1,18 +1,26 @@
-#version: "3.8"
-
 services:
   server:
-    build: ./Server-gRPC
+    build: ./Server-GRPC
+    container_name: rpc-server
     ports:
       - "50051:50051"
+    networks:
+      - mynet
     volumes:
       - ./src:/data
 
   client:
-    build: ./Client-gRPC
+    build: ./Client-GRPC
+    container_name: rpc-client
     depends_on:
       - server
+    networks:
+      - mynet
     volumes:
       - ./src:/data
-    stdin_open: true #teclado ligado ao container
-    tty: true #cria um terminal fake
+    stdin_open: true
+    tty: true
+
+networks:
+  mynet:
+    driver: bridge

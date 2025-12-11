@@ -2,10 +2,8 @@ import grpc
 import service_pb2, service_pb2_grpc
 import os
 import csv
+import io
 from lxml import etree
-
-
-# -------- CONFIGURAÇÃO DOS CAMINHOS --------
 
 CSV_PATH = "/data/input.csv"
 XML_PATH = "/data/output.xml"
@@ -17,36 +15,35 @@ if not os.path.exists(CSV_PATH):
     RESULT_PATH = "../src/result.txt"
 
 
-# -------- CONEXÃO gRPC --------
-
 def connect():
-    try:
-        channel = grpc.insecure_channel("server:50051")
-        grpc.channel_ready_future(channel).result(timeout=3)
-        return service_pb2_grpc.XMLServiceStub(channel)
-    except:
-        channel = grpc.insecure_channel("localhost:50051")
-        return service_pb2_grpc.XMLServiceStub(channel)
+    while True:
+        try:
+            channel = grpc.insecure_channel(
+                "server:50051",
+                options=[
+                    ("grpc.max_send_message_length", 1024 * 1024 * 100),
+                    ("grpc.max_receive_message_length", 1024 * 1024 * 100),
+                ]
+            )
+            grpc.channel_ready_future(channel).result(timeout=5)
+            return service_pb2_grpc.XMLServiceStub(channel)
+        except:
+            print("Aguardando servidor gRPC iniciar...")
 
 
 stub = connect()
 print("Conectado ao servidor")
 
 
-# -------- CSV → XML EM CHUNKS --------
-
 def csv_to_xml():
-
-    chunk_count = 0
-    total_lines = 0
-
     if not os.path.exists(CSV_PATH):
         print("Ficheiro input.csv não encontrado.")
         return
 
-    chunk_size = 2000
+    chunk_size = 500
+    chunk_number = 0
+    total_lines = 0
 
-    # apagar XML antigo
     if os.path.exists(XML_PATH):
         os.remove(XML_PATH)
 
@@ -54,56 +51,51 @@ def csv_to_xml():
 
     with open(CSV_PATH, newline="", encoding="utf-8") as csvfile:
         reader = csv.reader(csvfile)
-
-        headers = next(reader)  # cabeçalho
+        headers = next(reader)
 
         first_chunk = True
         chunk = []
 
         for row in reader:
-            chunk.append(",".join(row))
+            output = io.StringIO()
+            writer = csv.writer(output, quoting=csv.QUOTE_MINIMAL)
+            writer.writerow(row)
+            csv_line = output.getvalue().strip()
+
+            chunk.append(csv_line)
 
             if len(chunk) == chunk_size:
-                send_chunk(headers, chunk, root, first_chunk)
-                chunk_count += 1
+                chunk_number += 1
                 total_lines += len(chunk)
+                send_chunk(headers, chunk, root, first_chunk)
                 first_chunk = False
-                chunk.clear()
+                chunk = []
 
-        # último bloco
         if chunk:
-            send_chunk(headers, chunk, root, first_chunk)
-            chunk_count += 1
+            chunk_number += 1
             total_lines += len(chunk)
+            send_chunk(headers, chunk, root, first_chunk)
 
-    # guardar XML final
     with open(XML_PATH, "wb") as f:
         f.write(etree.tostring(root, pretty_print=True))
 
-    print(f"\n{chunk_count} chunks foram implementadas ao XML.")
-    print(f"Total: {total_lines} linhas.")
+    print(f"\n{chunk_number} chunks de {chunk_size} linhas foram implementadas ao XML.")
+    print(f"Total: {total_lines} linhas processadas.")
     print(f"XML criado com sucesso em {XML_PATH}")
 
 
-
 def send_chunk(headers, chunk, root, first_chunk):
-
-    # só o primeiro bloco tem cabeçalho
     if first_chunk:
         csv_text = ",".join(headers) + "\n" + "\n".join(chunk)
     else:
         csv_text = "\n".join(chunk)
 
     resp = stub.CsvToXml(service_pb2.CsvRequest(csv=csv_text))
-
     partial_root = etree.XML(resp.xml.encode())
 
     for jogador in partial_root:
         root.append(jogador)
 
-
-
-# -------- VALIDAR XML --------
 
 def validate_xml():
     if not os.path.exists(XML_PATH):
@@ -115,30 +107,29 @@ def validate_xml():
 
     resp = stub.ValidateXml(service_pb2.XmlRequest(xml=xml))
 
-    print("valido" if resp.valid else "invalido", resp.message)
+    if resp.valid:
+        print("XML validado com sucesso!")
+    else:
+        print("XML inválido:")
+        print(resp.message)
 
-
-# -------- XPATH --------
 
 def xpath_query():
     if not os.path.exists(XML_PATH):
-        print("XML não encontrado.")
+        print("❌ XML não encontrado.")
         return
-
-    query = input("Escreve o XPath: ")
 
     with open(XML_PATH, "r", encoding="utf-8") as f:
         xml = f.read()
 
-    resp = stub.XPathQuery(service_pb2.QueryRequest(xml=xml, query=query))
+    resp = stub.XmlInfo(service_pb2.XmlRequest(xml=xml))
 
-    with open(RESULT_PATH, "w", encoding="utf-8") as f:
-        f.write(resp.result)
+    print("\n🔎 Colunas encontradas no XML:")
+    for c in resp.colunas:
+        print(" -", c)
 
-    print("Resultado guardado em:", RESULT_PATH)
+    print(f"\n📌 Total de jogadores: {resp.total}")
 
-
-# -------- MENU --------
 
 def menu():
     while True:
@@ -146,7 +137,6 @@ def menu():
         print("1 - CSV → XML (chunks de 500)")
         print("2 - Validar XML (XSD)")
         print("3 - XPath")
-        print("4 - XQuery (futuro)")
         print("0 - Sair")
 
         option = input("Escolha: ")
@@ -157,15 +147,10 @@ def menu():
             validate_xml()
         elif option == "3":
             xpath_query()
-        elif option == "4":
-            print("XQuery em desenvolvimento...")
         elif option == "0":
             print("A sair...")
             break
         else:
             print("Opção inválida.")
-
-
-# -------- EXECUÇÃO --------
 
 menu()
