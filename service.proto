@@ -9,6 +9,8 @@ service XMLService {
   rpc XPathQuery (QueryRequest) returns (QueryResponse);
 
   rpc XmlInfo (XmlRequest) returns (XmlInfoResponse);
+
+  rpc ExecuteXQuery (XQueryRequest) returns (XQueryResponse);
 }
 
 message CsvRequest {
@@ -40,4 +42,13 @@ message XmlResponse {
 message XmlInfoResponse {
   repeated string colunas = 1;
   int32 total = 2;
+}
+
+message XQueryRequest {
+  string xmlPath = 1;
+  string query = 2;
+}
+
+message XQueryResponse {
+  string result = 1;
 }

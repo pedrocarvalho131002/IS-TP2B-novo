@@ -2,9 +2,13 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-COPY . .
+RUN apt-get update && apt-get install -y default-jre wget
 
-RUN pip install grpcio grpcio-tools lxml
+RUN wget https://repo1.maven.org/maven2/net/sf/saxon/Saxon-HE/10.9/Saxon-HE-10.9.jar -O /app/saxon-he.jar
+
+COPY . /app/
+
+RUN pip install lxml grpcio grpcio-tools
 
 EXPOSE 50051
 

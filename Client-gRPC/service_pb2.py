@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rservice.proto\"\x19\n\nCsvRequest\x12\x0b\n\x03\x63sv\x18\x01 \x01(\t\"\x19\n\nXmlRequest\x12\x0b\n\x03xml\x18\x01 \x01(\t\"4\n\x12ValidationResponse\x12\r\n\x05valid\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"*\n\x0cQueryRequest\x12\x0b\n\x03xml\x18\x01 \x01(\t\x12\r\n\x05query\x18\x02 \x01(\t\"\x1f\n\rQueryResponse\x12\x0e\n\x06result\x18\x01 \x01(\t\"\x1a\n\x0bXmlResponse\x12\x0b\n\x03xml\x18\x01 \x01(\t\"1\n\x0fXmlInfoResponse\x12\x0f\n\x07\x63olunas\x18\x01 \x03(\t\x12\r\n\x05total\x18\x02 \x01(\x05\x32\xbb\x01\n\nXMLService\x12%\n\x08\x43svToXml\x12\x0b.CsvRequest\x1a\x0c.XmlResponse\x12/\n\x0bValidateXml\x12\x0b.XmlRequest\x1a\x13.ValidationResponse\x12+\n\nXPathQuery\x12\r.QueryRequest\x1a\x0e.QueryResponse\x12(\n\x07XmlInfo\x12\x0b.XmlRequest\x1a\x10.XmlInfoResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rservice.proto\"\x19\n\nCsvRequest\x12\x0b\n\x03\x63sv\x18\x01 \x01(\t\"\x19\n\nXmlRequest\x12\x0b\n\x03xml\x18\x01 \x01(\t\"4\n\x12ValidationResponse\x12\r\n\x05valid\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"*\n\x0cQueryRequest\x12\x0b\n\x03xml\x18\x01 \x01(\t\x12\r\n\x05query\x18\x02 \x01(\t\"\x1f\n\rQueryResponse\x12\x0e\n\x06result\x18\x01 \x01(\t\"\x1a\n\x0bXmlResponse\x12\x0b\n\x03xml\x18\x01 \x01(\t\"1\n\x0fXmlInfoResponse\x12\x0f\n\x07\x63olunas\x18\x01 \x03(\t\x12\r\n\x05total\x18\x02 \x01(\x05\"/\n\rXQueryRequest\x12\x0f\n\x07xmlPath\x18\x01 \x01(\t\x12\r\n\x05query\x18\x02 \x01(\t\" \n\x0eXQueryResponse\x12\x0e\n\x06result\x18\x01 \x01(\t2\xed\x01\n\nXMLService\x12%\n\x08\x43svToXml\x12\x0b.CsvRequest\x1a\x0c.XmlResponse\x12/\n\x0bValidateXml\x12\x0b.XmlRequest\x1a\x13.ValidationResponse\x12+\n\nXPathQuery\x12\r.QueryRequest\x1a\x0e.QueryResponse\x12(\n\x07XmlInfo\x12\x0b.XmlRequest\x1a\x10.XmlInfoResponse\x12\x30\n\rExecuteXQuery\x12\x0e.XQueryRequest\x1a\x0f.XQueryResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -45,6 +45,10 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_XMLRESPONSE']._serialized_end=228
   _globals['_XMLINFORESPONSE']._serialized_start=230
   _globals['_XMLINFORESPONSE']._serialized_end=279
-  _globals['_XMLSERVICE']._serialized_start=282
-  _globals['_XMLSERVICE']._serialized_end=469
+  _globals['_XQUERYREQUEST']._serialized_start=281
+  _globals['_XQUERYREQUEST']._serialized_end=328
+  _globals['_XQUERYRESPONSE']._serialized_start=330
+  _globals['_XQUERYRESPONSE']._serialized_end=362
+  _globals['_XMLSERVICE']._serialized_start=365
+  _globals['_XMLSERVICE']._serialized_end=602
 # @@protoc_insertion_point(module_scope)

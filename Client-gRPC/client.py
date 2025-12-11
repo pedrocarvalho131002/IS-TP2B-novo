@@ -5,14 +5,9 @@ import csv
 import io
 from lxml import etree
 
-CSV_PATH = "/data/input.csv"
-XML_PATH = "/data/output.xml"
-RESULT_PATH = "/data/result.txt"
-
-if not os.path.exists(CSV_PATH):
-    CSV_PATH = "../src/input.csv"
-    XML_PATH = "../src/output.xml"
-    RESULT_PATH = "../src/result.txt"
+CSV_PATH = "/app/src/input.csv"
+XML_PATH = "/app/src/output.xml"
+RESULT_PATH = "/app/src/result.txt"
 
 
 def connect():
@@ -130,6 +125,34 @@ def xpath_query():
 
     print(f"\n📌 Total de jogadores: {resp.total}")
 
+def xquery_top10():
+    if not os.path.exists(XML_PATH):
+        print("❌ XML não encontrado. Converta primeiro.")
+        return
+
+    # A XQuery que extrai os primeiros 10 jogadores
+    query = """
+    declare option saxon:output "indent=yes";
+
+    <jogadores>
+    {
+        for $j in /root/jogador[position() <= 10]
+        return $j
+    }
+    </jogadores>
+    """
+
+    # Enviar pedido para o servidor
+    resp = stub.ExecuteXQuery(
+        service_pb2.XQueryRequest(
+            xmlPath=XML_PATH,
+            query=query
+        )
+    )
+
+    print("\nResultado do servidor:")
+    print(resp.result)
+
 
 def menu():
     while True:
@@ -137,6 +160,7 @@ def menu():
         print("1 - CSV → XML (chunks de 500)")
         print("2 - Validar XML (XSD)")
         print("3 - XPath")
+        print("4 - XQuery")
         print("0 - Sair")
 
         option = input("Escolha: ")
@@ -147,6 +171,8 @@ def menu():
             validate_xml()
         elif option == "3":
             xpath_query()
+        elif option == "4":
+            xquery_top10()
         elif option == "0":
             print("A sair...")
             break

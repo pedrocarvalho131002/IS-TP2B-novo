@@ -54,6 +54,11 @@ class XMLServiceStub(object):
                 request_serializer=service__pb2.XmlRequest.SerializeToString,
                 response_deserializer=service__pb2.XmlInfoResponse.FromString,
                 _registered_method=True)
+        self.ExecuteXQuery = channel.unary_unary(
+                '/XMLService/ExecuteXQuery',
+                request_serializer=service__pb2.XQueryRequest.SerializeToString,
+                response_deserializer=service__pb2.XQueryResponse.FromString,
+                _registered_method=True)
 
 
 class XMLServiceServicer(object):
@@ -83,6 +88,12 @@ class XMLServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def ExecuteXQuery(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_XMLServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -105,6 +116,11 @@ def add_XMLServiceServicer_to_server(servicer, server):
                     servicer.XmlInfo,
                     request_deserializer=service__pb2.XmlRequest.FromString,
                     response_serializer=service__pb2.XmlInfoResponse.SerializeToString,
+            ),
+            'ExecuteXQuery': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExecuteXQuery,
+                    request_deserializer=service__pb2.XQueryRequest.FromString,
+                    response_serializer=service__pb2.XQueryResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -215,6 +231,33 @@ class XMLService(object):
             '/XMLService/XmlInfo',
             service__pb2.XmlRequest.SerializeToString,
             service__pb2.XmlInfoResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ExecuteXQuery(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/XMLService/ExecuteXQuery',
+            service__pb2.XQueryRequest.SerializeToString,
+            service__pb2.XQueryResponse.FromString,
             options,
             channel_credentials,
             insecure,

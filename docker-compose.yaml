@@ -7,7 +7,7 @@ services:
     networks:
       - mynet
     volumes:
-      - ./src:/data
+      - ./src:/app/src
 
   client:
     build: ./Client-GRPC
@@ -17,7 +17,7 @@ services:
     networks:
       - mynet
     volumes:
-      - ./src:/data
+      - ./src:/app/src
     stdin_open: true
     tty: true
 

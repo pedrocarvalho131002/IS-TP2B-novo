@@ -4,6 +4,8 @@ import service_pb2, service_pb2_grpc
 from scripts.csv_to_xml import csv_to_xml
 from scripts.validate_xml import validate_xml_with_xsd
 from scripts.xml_info import load_xml_string, listar_colunas, contar_registos
+from scripts.xquery_runner import run_xquery_and_save
+
 
 class XMLService(service_pb2_grpc.XMLServiceServicer):
 
@@ -31,6 +33,17 @@ class XMLService(service_pb2_grpc.XMLServiceServicer):
         total = contar_registos(xml_root)
 
         return service_pb2.XmlInfoResponse(colunas=colunas, total=total)
+    
+    def ExecuteXQuery(self, request, context):
+        xml_path = request.xmlPath
+        query = request.query
+
+        # Onde vais guardar o novo XML
+        output_path = "/app/src/jogadores_top10.xml"
+
+        result_message = run_xquery_and_save(xml_path, query, output_path)
+
+        return service_pb2.XQueryResponse(result=result_message)
 
 
 def serve():
