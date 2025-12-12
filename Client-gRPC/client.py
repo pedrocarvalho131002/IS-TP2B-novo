@@ -109,7 +109,7 @@ def validate_xml():
         print(resp.message)
 
 
-def xpath_query():
+def xpath():
     if not os.path.exists(XML_PATH):
         print("XML não encontrado.")
         return
@@ -133,12 +133,13 @@ def xquery_top10():
     query = """
     declare option saxon:output "indent=yes";
 
-    <jogadores>
+    <clientesPortugal>
     {
-        for $j in /root/jogador[position() <= 10]
-        return $j
+        for $r in /root/record
+        where $r/Country = "Portugal"
+        return $r
     }
-    </jogadores>
+    </clientesPortugal>
     """
 
     resp = stub.ExecuteXQuery(
@@ -155,8 +156,8 @@ def xquery_top10():
 def menu():
     while True:
         print("\n===== CLIENTE gRPC =====")
-        print("1 - CSV → XML (chunks de 500)")
-        print("2 - Validar XML (XSD)")
+        print("1 - CSV para XML")
+        print("2 - Validar XML com o XSD")
         print("3 - XPath")
         print("4 - XQuery")
         print("0 - Sair")
@@ -168,7 +169,7 @@ def menu():
         elif option == "2":
             validate_xml()
         elif option == "3":
-            xpath_query()
+            xpath()
         elif option == "4":
             xquery_top10()
         elif option == "0":

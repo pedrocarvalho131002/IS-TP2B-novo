@@ -3,39 +3,60 @@ import io
 import re
 from lxml import etree
 
+_LAST_HEADERS = None
 
-def safe_xml_tag(name: str, idx: int) -> str:
-    #limpar espaços
-    name = name.strip()
+def _sanitize_tag(name: str) -> str:
 
-    #se estiver vazio, inventa nome
-    if not name:
-        name = f"campo_{idx}"
+    if name is None:
+        return "field"
+    s = name.strip()
+    s = re.sub(r'[\s\/]+', '_', s)
+    s = re.sub(r'[^0-9A-Za-z_]', '', s)
+    if s == "":
+        s = "field"
+    if re.match(r'^\d', s):
+        s = 'f_' + s
+    return s
 
-    #substitui caracteres inválidos
-    name = re.sub(r"[^a-zA-Z0-9_]", "_", name)
+def csv_to_xml(csv_text: str) -> str:
 
-    #não pode começar por um número
-    if name[0].isdigit():
-        name = "_" + name
+    global _LAST_HEADERS
 
-    return name
+    sio = io.StringIO(csv_text)
+    reader = csv.reader(sio)
 
+    rows = [r for r in reader if r is not None and len(r) > 0]
 
-def csv_to_xml(csv_chunk: str) -> str:
+    if not rows:
+        root = etree.Element("root")
+        return etree.tostring(root, pretty_print=True, encoding="utf-8").decode("utf-8")
 
-    f = io.StringIO(csv_chunk)
-    reader = csv.reader(f)
-    headers = next(reader)
-    headers = [safe_xml_tag(h, i) for i, h in enumerate(headers)]
+    if _LAST_HEADERS is None:
+        header_row = rows[0]
+        data_rows = rows[1:]
+        _LAST_HEADERS = header_row
+    else:
+        header_row = _LAST_HEADERS
+        data_rows = rows
+
+        if len(rows) > 0 and len(rows[0]) == len(header_row):
+            first_row = [c.strip() for c in rows[0]]
+            header_strip = [c.strip() for c in header_row]
+            if first_row == header_strip:
+                data_rows = rows[1:]
+
+    sanitized_headers = [_sanitize_tag(h) for h in header_row]
+
     root = etree.Element("root")
 
-    for row in reader:
+    for row in data_rows:
+        if len(row) < len(sanitized_headers):
+            row = row + [""] * (len(sanitized_headers) - len(row))
+        record_el = etree.Element("record")
+        for idx, tag in enumerate(sanitized_headers):
+            value = row[idx] if idx < len(row) else ""
+            child = etree.SubElement(record_el, tag)
+            child.text = value if value is not None else ""
+        root.append(record_el)
 
-        jogador = etree.SubElement(root, "jogador")
-
-        for campo, valor in zip(headers, row):
-            etree.SubElement(jogador, campo).text = valor.strip()
-    
-
-    return etree.tostring(root, encoding="unicode")
+    return etree.tostring(root, pretty_print=True, encoding="utf-8").decode("utf-8")
