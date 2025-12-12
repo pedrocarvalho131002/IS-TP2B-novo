@@ -38,7 +38,6 @@ class XMLService(service_pb2_grpc.XMLServiceServicer):
         xml_path = request.xmlPath
         query = request.query
 
-        # Onde vais guardar o novo XML
         output_path = "/app/src/jogadores_top10.xml"
 
         result_message = run_xquery_and_save(xml_path, query, output_path)

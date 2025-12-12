@@ -111,7 +111,7 @@ def validate_xml():
 
 def xpath_query():
     if not os.path.exists(XML_PATH):
-        print("❌ XML não encontrado.")
+        print("XML não encontrado.")
         return
 
     with open(XML_PATH, "r", encoding="utf-8") as f:
@@ -119,18 +119,17 @@ def xpath_query():
 
     resp = stub.XmlInfo(service_pb2.XmlRequest(xml=xml))
 
-    print("\n🔎 Colunas encontradas no XML:")
+    print("\nColunas encontradas no XML:")
     for c in resp.colunas:
         print(" -", c)
 
-    print(f"\n📌 Total de jogadores: {resp.total}")
+    print(f"\nTotal de jogadores: {resp.total}")
 
 def xquery_top10():
     if not os.path.exists(XML_PATH):
-        print("❌ XML não encontrado. Converta primeiro.")
+        print("XML não encontrado.")
         return
 
-    # A XQuery que extrai os primeiros 10 jogadores
     query = """
     declare option saxon:output "indent=yes";
 
@@ -142,7 +141,6 @@ def xquery_top10():
     </jogadores>
     """
 
-    # Enviar pedido para o servidor
     resp = stub.ExecuteXQuery(
         service_pb2.XQueryRequest(
             xmlPath=XML_PATH,

@@ -26,12 +26,8 @@ def csv_to_xml(csv_chunk: str) -> str:
 
     f = io.StringIO(csv_chunk)
     reader = csv.reader(f)
-
     headers = next(reader)
-
-    #sanitizar todos os headers
     headers = [safe_xml_tag(h, i) for i, h in enumerate(headers)]
-
     root = etree.Element("root")
 
     for row in reader:

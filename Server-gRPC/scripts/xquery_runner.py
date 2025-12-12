@@ -5,7 +5,6 @@ import os
 SAXON_JAR = "/app/saxon-he.jar"
 
 def run_xquery_and_save(xml_path, xquery_text, output_path):
-    # Create temporary query file
     with tempfile.NamedTemporaryFile(delete=False, suffix=".xq") as tmp:
         tmp.write(xquery_text.encode("utf-8"))
         query_file = tmp.name
@@ -16,7 +15,7 @@ def run_xquery_and_save(xml_path, xquery_text, output_path):
             "net.sf.saxon.Query",
             f"-s:{xml_path}",
             f"-q:{query_file}",
-            f"-o:{output_path}"   # <----- salvar ficheiro aqui
+            f"-o:{output_path}"
         ]
 
         result = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
