@@ -20,7 +20,7 @@ def run_xquery_and_save(xml_path, xquery_text, output_path):
 
         result = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 
-        return "Arquivo criado em: " + output_path
+        return "Ficheiro criado em: " + output_path
 
     except subprocess.CalledProcessError as e:
         return "Erro ao executar XQuery:\n" + e.output.decode()

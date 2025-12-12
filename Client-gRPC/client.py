@@ -23,7 +23,7 @@ def connect():
             grpc.channel_ready_future(channel).result(timeout=5)
             return service_pb2_grpc.XMLServiceStub(channel)
         except:
-            print("Aguardando servidor gRPC iniciar...")
+            print("À espera do servidor gRPC iniciar...")
 
 
 stub = connect()
@@ -94,7 +94,7 @@ def send_chunk(headers, chunk, root, first_chunk):
 
 def validate_xml():
     if not os.path.exists(XML_PATH):
-        print("XML não encontrado. Converta primeiro.")
+        print("XML não encontrado.")
         return
 
     with open(XML_PATH, "r", encoding="utf-8") as f:
@@ -103,7 +103,7 @@ def validate_xml():
     resp = stub.ValidateXml(service_pb2.XmlRequest(xml=xml))
 
     if resp.valid:
-        print("XML validado com sucesso!")
+        print("XML é válido!")
     else:
         print("XML inválido:")
         print(resp.message)
@@ -123,7 +123,7 @@ def xpath():
     for c in resp.colunas:
         print(" -", c)
 
-    print(f"\nTotal de jogadores: {resp.total}")
+    print(f"\nTotal de clientes: {resp.total}")
 
 def xquery_top10():
     if not os.path.exists(XML_PATH):
@@ -155,7 +155,7 @@ def xquery_top10():
 
 def menu():
     while True:
-        print("\n===== CLIENTE gRPC =====")
+        print("\n===== CLIENTE =====")
         print("1 - CSV para XML")
         print("2 - Validar XML com o XSD")
         print("3 - XPath")

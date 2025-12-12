@@ -1,27 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
-
     <xs:element name="root">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="record" maxOccurs="unbounded" minOccurs="0">
                     <xs:complexType>
                         <xs:sequence>
-
                             <xs:element name="Index" type="xs:integer"/>
-
                             <xs:element name="Customer_Id" type="xs:string"/>
-
                             <xs:element name="First_Name" type="xs:string"/>
                             <xs:element name="Last_Name" type="xs:string"/>
-
                             <xs:element name="Company" type="xs:string" minOccurs="0"/>
                             <xs:element name="City" type="xs:string" minOccurs="0"/>
                             <xs:element name="Country" type="xs:string" minOccurs="0"/>
-
                             <xs:element name="Phone_1" type="xs:string" minOccurs="0"/>
                             <xs:element name="Phone_2" type="xs:string" minOccurs="0"/>
-
                             <xs:element name="Email">
                                 <xs:simpleType>
                                     <xs:restriction base="xs:string">
@@ -30,7 +23,6 @@
                                     </xs:restriction>
                                 </xs:simpleType>
                             </xs:element>
-
                             <xs:element name="Subscription_Date">
                                 <xs:simpleType>
                                     <xs:restriction base="xs:date">
@@ -38,7 +30,6 @@
                                     </xs:restriction>
                                 </xs:simpleType>
                             </xs:element>
-
                             <xs:element name="Website">
                                 <xs:simpleType>
                                     <xs:restriction base="xs:string">
@@ -46,12 +37,10 @@
                                     </xs:restriction>
                                 </xs:simpleType>
                             </xs:element>
-
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
 </xs:schema>
